@@ -109,7 +109,7 @@ SELECT DISTINCT
   ?EL_ID
   ?omniglotURL
   ?EthURL
-  ?EthStatus
+  ?EthStatusLabel
   ?totalSpeakers
   ?totalSpeakersGroup
   ?coord
@@ -210,7 +210,15 @@ function refresh_map() {
 
 function fix_popups() {
     $.each( $(".leaflet-popup-content SPAN[title]"), function() {
-        this.outerHTML = '<b>' + this.title + '</b>: ' + this.outerHTML
+        title = this.title;
+        value = this.outerHTML;
+
+        label = title.split(':')[0].replace('Label', '');
+        label = label.charAt(0).toUpperCase() + label.slice(1);
+
+        value = value.replace(/Point\((.*)\)/, '$1');
+
+        this.outerHTML = '<b>' + label + '</b>: ' + value;
     } );
 }
 
