@@ -113,7 +113,8 @@ SELECT DISTINCT
   ?totalSpeakers
   ?totalSpeakersGroup
   ?coord
-  ?urls
+  ?URLs
+  ?Tribe
   ?image
 WHERE {
   hint:Query hint:optimizer "None" .
@@ -184,7 +185,7 @@ WHERE {
   }
 
   OPTIONAL {
-    SELECT ?language (SAMPLE(?images) as ?image)
+    SELECT ?language (MAX(?tribe) as ?Tribe) (SAMPLE(?images) as ?image)
     WHERE
     {
       ?language wdt:P2341 ?tribe .
