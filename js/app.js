@@ -151,7 +151,7 @@ WHERE {
 
   OPTIONAL
   {
-      SELECT ?language ?coord (GROUP_CONCAT(DISTINCT ?refURL; SEPARATOR=", ") as ?urls)
+      SELECT ?language ?coord (GROUP_CONCAT(DISTINCT ?refURL; SEPARATOR=", ") as ?URLs)
       WHERE
       {
         hint:Query hint:optimizer "None" .
