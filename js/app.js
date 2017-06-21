@@ -114,6 +114,7 @@ SELECT DISTINCT
   ?totalSpeakersGroup
   ?coord
   ?urls
+  ?image
 WHERE {
   hint:Query hint:optimizer "None" .
   {?language wdt:P31 wd:Q34770}UNION{BIND(wd:Q6488691 as ?language)}
@@ -180,6 +181,21 @@ WHERE {
 
     ?ref pr:P854 ?omniglotURL 
     FILTER (CONTAINS(str(?omniglotURL),"omniglot."))
+  }
+
+  OPTIONAL {
+    SELECT ?language (SAMPLE(?images) as ?image)
+    WHERE
+    {
+      ?language wdt:P2341 ?tribe .
+      ?tribe wdt:P31/wdt:P379* wd:Q83828 .
+      ?tribe wdt:P17 wd:Q252 .
+      ?instrument wdt:P2341 ?tribe .
+      ?instrument wdt:P31 wd:Q34379 . # musical instrument
+      ?instrument wdt:P2341 ?tribe .
+      ?instrument wdt:P18 ?images
+    }
+    GROUP BY ?language
   }
 
   SERVICE wikibase:label { bd:serviceParam wikibase:language "id" }
