@@ -214,6 +214,7 @@ function fix_popups() {
         title = this.title;
         value = this.outerHTML;
 
+
         if (value.indexOf("<b>") == -1) {
 			label = title.split(':')[0].replace('Label', '');
 			label = label.charAt(0).toUpperCase() + label.slice(1);
