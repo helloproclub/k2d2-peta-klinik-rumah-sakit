@@ -214,17 +214,21 @@ function fix_popups() {
         title = this.title;
         value = this.outerHTML;
 
-        label = title.split(':')[0].replace('Label', '');
-        label = label.charAt(0).toUpperCase() + label.slice(1);
+        if (value.indexOf("<b>") == -1) {
+			label = title.split(':')[0].replace('Label', '');
+			label = label.charAt(0).toUpperCase() + label.slice(1);
 
-        value = value.replace(/Point\((.*)\)/, '$1');
+			value = value.replace(/Point\((.*)\)/, '$1');
+			value = value.replace(/title="[^"]*"/, '');
 
-        this.outerHTML = '<b>' + label + '</b>: ' + value;
+			this.outerHTML = '<b>' + label + '</b>: ' + value;
+		}
     } );
 }
 
 $( document ).ready( function() {
     var query = pick_map();
+    setInterval(fix_popups, 100);
     renderQuery( query );
     renderEdit( query, renderQuery );
 } );
