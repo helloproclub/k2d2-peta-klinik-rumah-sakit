@@ -67,7 +67,10 @@ body {
 </style>
 <body>
 	<form method="post">
-		<input name="refresh" type="button" onclick="refresh_map('all')" value="Refresh"/>
+		<select onchange="refresh_map(this.value)">
+			<option value="languages">Bahasa di Indonesia</option>
+			<option value="uni-in-flores">Universitas di Flores</option>
+		</select>
     </form>
     <br/>
 	<div id="progress">

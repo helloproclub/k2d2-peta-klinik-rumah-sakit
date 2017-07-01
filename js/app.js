@@ -202,11 +202,44 @@ WHERE {
   SERVICE wikibase:label { bd:serviceParam wikibase:language "id" }
 }
 	`;
-	return all;
+
+  uniInFlores = `
+#defaultView:Map
+SELECT ?university ?universityLabel ?coordinate ?website ?inception
+WHERE {
+  ?university wdt:P31/wdt:P279* wd:Q3918 ;
+    wdt:P17 wd:Q252 ;
+    wdt:P625 ?coordinate ;
+    p:P625 ?coord .
+    ?coord psv:P625 ?cnode .
+    ?cnode wikibase:geoLatitude ?lat .
+    ?cnode wikibase:geoLongitude ?long .
+    FILTER(?long > 119.767) .
+    FILTER(?lat < -8.119) .
+    FILTER(?long < 123.085) .
+    FILTER(?lat > -8.966) .
+  OPTIONAL {
+    ?university wdt:P856 ?website .
+    ?university wdt:P571 ?inception .
+  }
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "id,en" .
+  }
+}
+    `;
+
+  switch(name) {
+    case 'languages':
+      return all;
+      break;
+    case 'uni-in-flores':
+      return uniInFlores;
+      break;
+  }
 }             
 
-function refresh_map() {
-    renderQuery( pick_map() );
+function refresh_map(name) {
+    renderQuery( pick_map(name) );
 }
 
 function fix_popups() {
@@ -228,7 +261,7 @@ function fix_popups() {
 }
 
 $( document ).ready( function() {
-    var query = pick_map();
+    var query = pick_map('languages');
     setInterval(fix_popups, 100);
     renderQuery( query );
     renderEdit( query, renderQuery );
