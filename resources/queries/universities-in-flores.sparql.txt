@@ -1,0 +1,21 @@
+SELECT ?university ?universityLabel ?coordinate ?website ?inception
+WHERE {
+  ?university wdt:P31/wdt:P279* wd:Q3918 ;
+    wdt:P17 wd:Q252 ;
+    wdt:P625 ?coordinate ;
+    p:P625 ?coord .
+    ?coord psv:P625 ?cnode .
+    ?cnode wikibase:geoLatitude ?lat .
+    ?cnode wikibase:geoLongitude ?long .
+    FILTER(?long > 119.767) .
+    FILTER(?lat < -8.119) .
+    FILTER(?long < 123.085) .
+    FILTER(?lat > -8.966) .
+  OPTIONAL {
+    ?university wdt:P856 ?website .
+    ?university wdt:P571 ?inception .
+  }
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "id,en" .
+  }
+}

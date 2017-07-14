@@ -1,0 +1,49 @@
+.map {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  top: 0px;
+}
+
+.control-panel {
+  z-index: 1000;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  width: 80%;
+  max-width: 320px;
+  background-color: white;
+  overflow-y: auto;
+  display: none;
+}
+
+.control-panel .content {
+  padding: 0px 10px 0px 10px;
+}
+
+.control-menu {
+  z-index: 999;
+  position: fixed;
+  right: 20px;
+  top: 20px;
+}
+
+.tabs {
+  overflow-x: hidden;
+}
+
+.tabs:hover {
+  overflow-x: auto;
+}
+
+.notif-holder {
+  z-index: 1001;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 80%;
+  max-width: 280px;
+  margin: auto;
+}

@@ -1,0 +1,103 @@
+# languages of Indonesia details
+
+SELECT DISTINCT
+  ?language
+  ?languageLabel
+  ?BPScode
+  ?ISO
+  ?IETF
+  ?EL_ID
+  ?omniglotURL
+  ?EthURL
+  ?EthStatusLabel
+  ?totalSpeakers
+  ?totalSpeakersGroup
+  ?coord
+  ?URLs
+  ?Tribe
+  ?image
+WHERE {
+  hint:Query hint:optimizer "None" .
+  {?language wdt:P31 wd:Q34770}UNION{BIND(wd:Q6488691 as ?language)}
+  ?language wdt:P17 wd:Q252 .
+  OPTIONAL {
+    ?language wdt:P276 ?location .
+    ?location wdt:P625 ?coord
+  }
+  OPTIONAL {?language wdt:P18 ?image}
+  OPTIONAL {?language wdt:P1448 ?officialName}
+  OPTIONAL {?language wdt:P2590 ?BPScode}
+  OPTIONAL {?language wdt:P220 ?ISO}
+  OPTIONAL {?language wdt:P305 ?IETF}
+  OPTIONAL {?language wdt:P2192 ?EL_ID}
+  OPTIONAL {
+    ?language wdt:P3823 ?EthStatus
+  }
+  BIND(
+      IF(BOUND(?EthStatus),
+        IRI(CONCAT("https://www.ethnologue.com/language/", STR(?ISO))), ""
+      )
+      as ?EthURL
+    )
+  OPTIONAL {?language wdt:P1098 ?totalSpeakers}
+  BIND(
+      IF(?totalSpeakers < 1000000, "<1M",
+      IF(?totalSpeakers < 2000000, "1M-2M",
+      IF(?totalSpeakers < 5000000, "2M-5M",
+      IF(?totalSpeakers < 10000000, "5M-10M",
+      IF(?totalSpeakers < 20000000, "10M-20M",
+      ">20M")))))
+      AS ?totalSpeakersGroup)
+
+  OPTIONAL
+  {
+      SELECT ?language ?coord (GROUP_CONCAT(DISTINCT ?refURL; SEPARATOR=", ") as ?URLs)
+      WHERE
+      {
+        hint:Query hint:optimizer "None" .
+        ?language wdt:P31 wd:Q34770 .
+        ?language wdt:P17 wd:Q252 .
+
+        ?language ?p ?statement.
+        ?statement ?ps ?object .
+        ?property wikibase:statementProperty ?ps .
+        ?property wikibase:claim ?p .
+
+        ?statement prov:wasDerivedFrom ?ref .
+
+        ?ref pr:P854 ?refURL
+        FILTER (!REGEX(str(?refURL),"(www.ethnologue|omniglot).com"))
+      }
+      GROUP BY ?language ?coord
+
+  }
+
+  OPTIONAL {
+    ?language ?p ?statement.
+    ?statement ?ps ?object .
+    ?property wikibase:statementProperty ?ps .
+    ?property wikibase:claim ?p .
+
+    ?statement prov:wasDerivedFrom ?ref .
+
+    ?ref pr:P854 ?omniglotURL 
+    FILTER (CONTAINS(str(?omniglotURL),"omniglot."))
+  }
+
+  OPTIONAL {
+    SELECT ?language (MAX(?tribe) as ?Tribe) (SAMPLE(?images) as ?image)
+    WHERE
+    {
+      ?language wdt:P2341 ?tribe .
+      ?tribe wdt:P31/wdt:P379* wd:Q83828 .
+      ?tribe wdt:P17 wd:Q252 .
+      ?instrument wdt:P2341 ?tribe .
+      ?instrument wdt:P31 wd:Q34379 . # musical instrument
+      ?instrument wdt:P2341 ?tribe .
+      ?instrument wdt:P18 ?images
+    }
+    GROUP BY ?language
+  }
+
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "id" }
+}
