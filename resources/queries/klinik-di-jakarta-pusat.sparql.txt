@@ -1,0 +1,8 @@
+select ?item ?itemLabel ?koordinat where {
+  ?item wdt:P31 wd:Q1774898.
+  ?item wdt:P131 wd:Q10109.
+  ?item wdt:P625 ?koordinat
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language 'en, id'
+  }
+}
