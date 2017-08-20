@@ -68,6 +68,24 @@ App.prototype._makeCollections = function (data) {
   return collections;
 }
 
+App.prototype._addToTable = function (data) {
+  data.results.bindings.forEach(function (item) {
+    $('#c-data-table-content').append(
+      '<div class="media">'
+      + '<div class="media-content">'
+      + '<p class="title is-6">'
+      + '<a href="'
+      + item.item.value
+      + '" target="_blank">'
+      + item.itemLabel.value
+      + '</a>'
+      + '</p>'
+      + '</div>'
+      + '</div>'
+    );
+  });
+}
+
 App.prototype._notifyResultStatus = function (data, collections) {
   $('#c-notif-holder').append(
     '<div class="notification is-info"><button class="delete" onclick="$(this).parent().remove()"></button>'
@@ -119,6 +137,7 @@ App.prototype._query = function (query) {
 
     self._removeLoading();
     self._notifyResultStatus(data, collections);
+    self._addToTable(data);
   });
 }
 
@@ -135,13 +154,24 @@ App.prototype._registerEvents = function () {
     $('#c-panel-menu').css('display', 'none');
   });
 
+  // back to menu from data
+   $('#c-button-data-back').click(function () {
+     $('#c-data-table').css('display', 'none');
+   })
+
   // query link
   $('a[c-query-filepath]').click(function () {
+    $('#c-data-table-content').empty();
     self._showLoading(this);
     var path = self._getQueryFilepath(this);
 
     $.get(path, function (res) {
       self._query(res);
     });
+
+    $('#c-path-name').empty();
+    $('#c-path-name').append($(this).attr('c-query-file'));
+
+    $('#c-data-table').css('display', 'block');
   });
 }
